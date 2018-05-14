@@ -21,7 +21,7 @@ import java.awt.event.ActionListener;
 
 import java.awt.event.ActionEvent;
 
-public class songGUI extends JFrame {
+public class songGUI extends JFrame{
 
 	private JPanel contentPane;
 	private JPanel panel;
@@ -36,24 +36,17 @@ public class songGUI extends JFrame {
 	private JButton btnStartInstrumental;
 	private JButton btnStopInstrumental;
 	
-	private Singer pattiSmith;
-    private Singer bruceSpringsteen;
-    private Singer guitar;
-    private Song song;
+    private Song song= new Song();
+    private Synchronizer synch= new Synchronizer(true, false);
+    private boolean stopIt = false;
+    private String lyrics3 = "Instrumental";
+    private    Performance firstVoicePerformance = new Performance(song, 1500);
+    private    Performance secondVoicePerformance = new Performance(song, 1500);
+    private    Performance guitarPerformance = new Performance(lyrics3, 1500);
+    private Singer pattiSmith= new Singer("Patti Smith", Voice.FIRST, firstVoicePerformance, stopIt, synch);
+    private Singer bruceSpringsteen= new Singer("Bruce Springsteen", Voice.SECOND, secondVoicePerformance, stopIt, synch);
+    private Singer guitar = new Singer("Guitar", Voice.BACKGROUND, guitarPerformance, stopIt, synch);
     
-    private void initializeSingingInThreads() {
-    	String lyrics3 = "Instrumental";
-        boolean stopIt = false;
-        Synchronizer synch = new Synchronizer(true, false);
-        song = new Song();
-        Performance firstVoicePerformance = new Performance(song, 1500);
-        Performance secondVoicePerformance = new Performance(song, 1500);
-        Performance guitarPerformance = new Performance(lyrics3, 1500);
-        
-        pattiSmith = new Singer("Patti Smith", Voice.FIRST, firstVoicePerformance, stopIt, synch);
-        bruceSpringsteen = new Singer("Bruce Springsteen", Voice.SECOND, secondVoicePerformance, stopIt, synch);
-        guitar = new Singer("Guitar", Voice.BACKGROUND, guitarPerformance, stopIt, synch);
-    }
 	/**
 	 * Launch the application.
 	 */
@@ -87,6 +80,7 @@ public class songGUI extends JFrame {
 		contentPane.add(getScrollPane_1(), BorderLayout.CENTER);
 	}
 	
+	
 	private JPanel getPanel_1() {
 		if (panel == null) {
 			panel = new JPanel();
@@ -106,6 +100,15 @@ public class songGUI extends JFrame {
 	private JButton getBtnStop() {
 		if (btnStop == null) {
 			btnStop = new JButton("Stop");
+			btnStop.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					pattiSmith.setStopIt(true);
+					bruceSpringsteen.setStopIt(true);
+					guitar.setStopIt(true);
+					
+					stopIt=true;
+				}
+			});
 			btnStop.setBounds(19, 44, 91, 23);
 		}
 		return btnStop;
@@ -114,12 +117,10 @@ public class songGUI extends JFrame {
 		if (btnStart == null) {
 			btnStart = new JButton("Start");
 			btnStart.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {	
-					initializeSingingInThreads();
+				public void actionPerformed(ActionEvent arg0) {
 					pattiSmith.start();
 					bruceSpringsteen.start();
 					guitar.start();
-					
 				}
 			});
 			btnStart.setBounds(19, 11, 91, 23);
@@ -180,5 +181,5 @@ public class songGUI extends JFrame {
 			btnStopInstrumental.setBounds(0, 252, 120, 23);
 		}
 		return btnStopInstrumental;
-	}	
+	}
 }

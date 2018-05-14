@@ -1,5 +1,7 @@
 package music;
 
+import gui.songGUI;
+
 public class Singer extends Thread {
     
     private String singerName;

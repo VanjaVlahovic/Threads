@@ -1,5 +1,6 @@
 package music;
 
+
 public class Synchronizer {
     
     public boolean firstVoiceFlag;
