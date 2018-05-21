@@ -8,9 +8,9 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import music.Performance;
-import music.Singer;
+
 import music.Song;
-import music.Synchronizer;
+
 import music.Voice;
 
 import javax.swing.JScrollPane;
@@ -36,16 +36,14 @@ public class songGUI extends JFrame{
 	private JButton btnStartInstrumental;
 	private JButton btnStopInstrumental;
 	
+	private Singer pattiSmith;
+    private Singer bruceSpringsteen;
+    private Singer guitar;
     private Song song= new Song();
-    private Synchronizer synch= new Synchronizer(true, false);
-    private boolean stopIt = false;
     private String lyrics3 = "Instrumental";
-    private    Performance firstVoicePerformance = new Performance(song, 1500);
-    private    Performance secondVoicePerformance = new Performance(song, 1500);
-    private    Performance guitarPerformance = new Performance(lyrics3, 1500);
-    private Singer pattiSmith= new Singer("Patti Smith", Voice.FIRST, firstVoicePerformance, stopIt, synch);
-    private Singer bruceSpringsteen= new Singer("Bruce Springsteen", Voice.SECOND, secondVoicePerformance, stopIt, synch);
-    private Singer guitar = new Singer("Guitar", Voice.BACKGROUND, guitarPerformance, stopIt, synch);
+    boolean stopIt = false;
+
+    SynchronizerGUI synch = new SynchronizerGUI(true, false, false, false);
     
 	/**
 	 * Launch the application.
@@ -78,8 +76,21 @@ public class songGUI extends JFrame{
 		contentPane.setLayout(new BorderLayout(0, 0));
 		contentPane.add(getPanel_1(), BorderLayout.EAST);
 		contentPane.add(getScrollPane_1(), BorderLayout.CENTER);
+		initializeSingingInThreads();
 	}
 	
+	 private void initializeSingingInThreads() {
+	 
+	        
+	        
+	        Performance firstVoicePerformance = new Performance(song, 1500);
+	        Performance secondVoicePerformance = new Performance(song, 1500);
+	        Performance guitarPerformance = new Performance(lyrics3, 1500);
+	        
+	        pattiSmith = new Singer("Patti Smith", Voice.FIRST, firstVoicePerformance, stopIt, synch);
+	        bruceSpringsteen = new Singer("Bruce Springsteen", Voice.SECOND, secondVoicePerformance, stopIt, synch);
+	        guitar  = new Singer("Giutar", Voice.BACKGROUND, guitarPerformance, stopIt, synch );
+	 }
 	
 	private JPanel getPanel_1() {
 		if (panel == null) {
@@ -97,22 +108,7 @@ public class songGUI extends JFrame{
 		}
 		return panel;
 	}
-	private JButton getBtnStop() {
-		if (btnStop == null) {
-			btnStop = new JButton("Stop");
-			btnStop.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					pattiSmith.setStopIt(true);
-					bruceSpringsteen.setStopIt(true);
-					guitar.setStopIt(true);
-					
-					stopIt=true;
-				}
-			});
-			btnStop.setBounds(19, 44, 91, 23);
-		}
-		return btnStop;
-	}
+	
 	private JButton getBtnStart() {
 		if (btnStart == null) {
 			btnStart = new JButton("Start");
@@ -127,9 +123,32 @@ public class songGUI extends JFrame{
 		}
 		return btnStart;
 	}
+	
+	private JButton getBtnStop() {
+		if (btnStop == null) {
+			btnStop = new JButton("Stop");
+			btnStop.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					synch.setStopP(true);
+					synch.setStopB(true);
+					synch.stop=true;
+					pattiSmith.setStopIt(true);
+					bruceSpringsteen.setStopIt(true);
+					guitar.setStopIt(true);
+				}
+			});
+			btnStop.setBounds(19, 44, 91, 23);
+		}
+		return btnStop;
+	}
 	private JButton getBtnStartPatty() {
 		if (btnStartPatty == null) {
 			btnStartPatty = new JButton("Start Patty");
+			btnStartPatty.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					pattiSmith.start();
+				}
+			});
 			btnStartPatty.setBounds(19, 78, 91, 23);
 		}
 		return btnStartPatty;
@@ -137,6 +156,15 @@ public class songGUI extends JFrame{
 	private JButton getBtnStartBruce() {
 		if (btnStartBruce == null) {
 			btnStartBruce = new JButton("Start Bruce ");
+			btnStartBruce.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					synch.setSecondVoiceFlag(true);
+					synch.setFirstVoiceFlag(true);
+					synch.setStopP(true);
+					synch.setStopB(false);
+					bruceSpringsteen.start();
+				}
+			});
 			btnStartBruce.setBounds(19, 146, 91, 23);
 		}
 		return btnStartBruce;
@@ -157,6 +185,12 @@ public class songGUI extends JFrame{
 	private JButton getBtnStopPatty() {
 		if (btnStopPatty == null) {
 			btnStopPatty = new JButton("Stop Patty");
+			btnStopPatty.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					synch.setStopP(true);
+					pattiSmith.setStopIt(true);
+				}
+			});
 			btnStopPatty.setBounds(19, 112, 91, 23);
 		}
 		return btnStopPatty;
@@ -164,6 +198,12 @@ public class songGUI extends JFrame{
 	private JButton getBtnStopBruce() {
 		if (btnStopBruce == null) {
 			btnStopBruce = new JButton("Stop Bruce");
+			btnStopBruce.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					synch.setStopB(true);
+					bruceSpringsteen.setStopIt(true);
+				}
+			});
 			btnStopBruce.setBounds(19, 183, 91, 23);
 		}
 		return btnStopBruce;
@@ -171,6 +211,13 @@ public class songGUI extends JFrame{
 	private JButton getBtnStartInstrumental() {
 		if (btnStartInstrumental == null) {
 			btnStartInstrumental = new JButton("Start instrumental");
+			btnStartInstrumental.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					synch.setFirstVoiceFlag(false);
+					synch.setSecondVoiceFlag(false);
+					guitar.start();
+				}
+			});
 			btnStartInstrumental.setBounds(0, 218, 120, 23);
 		}
 		return btnStartInstrumental;
@@ -178,8 +225,252 @@ public class songGUI extends JFrame{
 	private JButton getBtnStopInstrumental() {
 		if (btnStopInstrumental == null) {
 			btnStopInstrumental = new JButton("Stop instrumental");
+			btnStopInstrumental.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					synch.stop = true;
+					guitar.setStopIt(true);
+				}
+			});
 			btnStopInstrumental.setBounds(0, 252, 120, 23);
 		}
 		return btnStopInstrumental;
+	}
+	
+	class SynchronizerGUI {
+	    
+	    private boolean firstVoiceFlag;
+	    private boolean secondVoiceFlag;
+	    public boolean stop=false;
+	    public boolean isFirstVoiceFlag() {
+			return firstVoiceFlag;
+		}
+		public void setFirstVoiceFlag(boolean firstVoiceFlag) {
+			this.firstVoiceFlag = firstVoiceFlag;
+		}
+		public boolean isSecondVoiceFlag() {
+			return secondVoiceFlag;
+		}
+		public void setSecondVoiceFlag(boolean secondVoiceFlag) {
+			this.secondVoiceFlag = secondVoiceFlag;
+		}
+
+		private boolean stopB=false;
+		private boolean stopP=false;
+	    
+	    public boolean isStopB() {
+	        return stopB;
+	    }
+	    public void setStopB(boolean stopB) {
+	        this.stopB = stopB;
+	    }
+	    public boolean isStopP() {
+	        return stopP;
+	    }
+	    public void setStopP(boolean stopP) {
+	        this.stopP = stopP;
+	    }
+	    
+	    public SynchronizerGUI(boolean firstVoiceFlag, boolean secondVoiceFlag, boolean stopP, boolean stopB) {
+	        super();
+	        this.firstVoiceFlag = firstVoiceFlag;
+	        this.secondVoiceFlag = secondVoiceFlag;
+	        this.stopP = stopP;
+	        this.stopB = stopB;
+	    }
+	    
+	    public synchronized void singFirstVoice(Song song, int delay, String name) {
+	        while (!firstVoiceFlag) {
+	            try {
+	                wait();
+	            } catch (InterruptedException e) {
+	                // TODO Auto-generated catch block
+	                e.printStackTrace();
+	            }
+	        }
+	        sing(song, delay, null, name);
+	    }
+	    
+	    public synchronized void singSecondVoice(Song song, int delay, String name) {
+	        while (!secondVoiceFlag) {
+	            try {
+	                wait();
+	            } catch (InterruptedException e) {
+	                // TODO Auto-generated catch block
+	                e.printStackTrace();
+	            }
+	        }
+	        sing(song, delay, null, name);
+	    }
+	    
+	    public synchronized void singGuitarSolo(String lyrics, int delay, String name) {
+	        while (firstVoiceFlag || secondVoiceFlag) {
+	            try {
+	                wait();
+	            } catch (InterruptedException e) {
+	                // TODO Auto-generated catch block
+	                e.printStackTrace();
+	            }
+	        }
+	        sing(null, delay, lyrics, name);
+	    }
+	    
+	    private void sing(Song song, int delay, String lyrics, String name) {
+	        if (firstVoiceFlag && !secondVoiceFlag) {
+	        	 
+	        		singVerseP(song.getStrophe1().getVerse1(), delay, name);	        	 
+	        		singVerseP(song.getStrophe1().getVerse2(), delay, name);	        	 
+	        		singVerseP(song.getStrophe1().getVerse3(), delay, name);	        	 
+	        		singVerseP(song.getStrophe1().getVerse4(), delay, name);	        	 
+	        		singVerseP(song.getStrophe1().getVerse5(), delay, name);
+	        	
+	        	secondVoiceFlag = true;
+	        }else{ 
+	        	if (firstVoiceFlag && secondVoiceFlag) {
+	  
+	        		singVerseP(song.getPreChorus().getVerse1(), delay, name);
+	        		singVerseP(song.getPreChorus().getVerse2(), delay, name);	        		
+	        		singVerseP(song.getPreChorus().getVerse3(), delay, name);	        		
+	        		singVerseP(song.getPreChorus().getVerse4(), delay, name);	        		
+	        		singVerseP(song.getPreChorus().getVerse5(), delay, name);	            	
+	        		
+	        		singVerseP(song.getChorus().getVerse1(), delay, name);	        		
+	        		singVerseP(song.getChorus().getVerse2(), delay, name);	        		
+	        		singVerseP(song.getChorus().getVerse3(), delay, name);	        		
+	        		singVerseP(song.getChorus().getVerse4(), delay, name);	        		
+	        		singVerseP(song.getChorus().getVerse5(), delay, name);		
+	        			        			
+	        		singVerseB(song.getPreChorus().getVerse1(), delay, name);
+	        		singVerseB(song.getPreChorus().getVerse2(), delay, name);	        		
+	        		singVerseB(song.getPreChorus().getVerse3(), delay, name);	        		
+	        		singVerseB(song.getPreChorus().getVerse4(), delay, name);	        		
+	        		singVerseB(song.getPreChorus().getVerse5(), delay, name);	            	
+	        		
+	        		singVerseB(song.getChorus().getVerse1(), delay, name);	        		
+	        		singVerseB(song.getChorus().getVerse2(), delay, name);	        		
+	        		singVerseB(song.getChorus().getVerse3(), delay, name);	        		
+	        		singVerseB(song.getChorus().getVerse4(), delay, name);	        		
+	        		singVerseB(song.getChorus().getVerse5(), delay, name);	        
+	            	firstVoiceFlag = false;
+	            	secondVoiceFlag = false;
+	        	}else {
+	        		if(secondVoiceFlag) {
+	        			
+	        			singVerseB(song.getStrophe2().getVerse1(), delay, name);	        			
+	        			singVerseB(song.getStrophe2().getVerse2(), delay, name);	        			
+	        			singVerseB(song.getStrophe2().getVerse3(), delay, name);	        			
+	        			singVerseB(song.getStrophe2().getVerse4(), delay, name);	        			
+	       				singVerseB(song.getStrophe2().getVerse5(), delay, name);   
+	        			
+	        			firstVoiceFlag = true;
+	        		}else {
+	        			if (!stop)
+	        				textArea.setText(textArea.getText()+'\n'+name+":		"+lyrics);
+	        			try {
+	        				wait(delay);
+	        			} catch (InterruptedException e) {
+	        				// TODO Auto-generated catch block
+	        				e.printStackTrace();
+	        			}       
+	        			secondVoiceFlag = true;
+	        		}
+	        	}
+	        }
+	        notifyAll();
+	    }
+
+	    private void singVerseP(String verse, int delay, String name) {
+	    	if(!stopP)
+	    		textArea.setText(textArea.getText()+'\n'+name+":		"+verse);
+	    	else 
+	    		return;
+			try {
+				wait(delay);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    }
+	    private void singVerseB(String verse, int delay, String name) {
+	    	if(!stopB)
+	    		textArea.setText(textArea.getText()+'\n'+name+":		"+verse);
+	    	else 
+	    		return;
+			try {
+				wait(delay);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    }
+	    
+}
+	class Singer extends Thread {
+	    
+	    private String singerName;
+	    private Voice voice;
+	    private Performance performance;    
+	    private boolean stopIt;
+	    private SynchronizerGUI synch;
+	    
+	    public Singer(String singerName, Voice voice, Performance performance, boolean stopIt, SynchronizerGUI synch) {
+	        super();
+	        this.singerName = singerName;
+	        this.voice = voice;
+	        this.performance = performance;
+	        this.stopIt = stopIt;
+	        this.synch = synch;
+	    }
+	    
+	    @Override
+	    public void run() {
+	        sing();
+	    }
+	    
+	    private synchronized void sing() {
+	        while (!stopIt) {
+	            if (this.voice == Voice.FIRST) {
+	                this.synch.singFirstVoice(performance.getSong(), performance.getDelay(), getSingerName());
+	            } else {
+	            	if (this.voice == Voice.SECOND)
+	            		this.synch.singSecondVoice(performance.getSong(), performance.getDelay(), getSingerName());
+	            	else
+	            		this.synch.singGuitarSolo(performance.getLyrics(), performance.getDelay(), getSingerName());
+	            }
+	        }
+	    }
+	    
+	    public String getSingerName() {
+	        return singerName;
+	    }
+	    public void setSingerName(String singerName) {
+	        this.singerName = singerName;
+	    }
+	    public Voice getVoice() {
+	        return voice;
+	    }
+	    public void setVoice(Voice voice) {
+	        this.voice = voice;
+	    }
+	    public Performance getPerformance() {
+	        return performance;
+	    }
+	    public void setPerformance(Performance performance) {
+	        this.performance = performance;
+	    }
+	    public boolean isStopIt() {
+	        return stopIt;
+	    }
+	    public void setStopIt(boolean stopIt) {
+	        this.stopIt = stopIt;
+	    }
+
+	    public SynchronizerGUI getSynch() {
+	        return synch;
+	    }
+
+	    public void setSynch(SynchronizerGUI synch) {
+	        this.synch = synch;
+	    }
+
 	}
 }
