@@ -20,6 +20,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionListener;
 
 import java.awt.event.ActionEvent;
+import java.awt.Font;
+import java.awt.Color;
 
 public class songGUI extends JFrame{
 
@@ -40,7 +42,7 @@ public class songGUI extends JFrame{
     private Singer bruceSpringsteen;
     private Singer guitar;
     private Song song= new Song();
-    private String lyrics3 = "Instrumental";
+    private String lyrics3 = "Guitar solo";
     boolean stopIt = false;
 
     SynchronizerGUI synch = new SynchronizerGUI(true, false, false, false);
@@ -69,7 +71,7 @@ public class songGUI extends JFrame{
 	}
 	private void createContents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 452, 324);
+		setBounds(100, 100, 703, 378);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -95,7 +97,8 @@ public class songGUI extends JFrame{
 	private JPanel getPanel_1() {
 		if (panel == null) {
 			panel = new JPanel();
-			panel.setPreferredSize(new Dimension(120, 50));
+			panel.setMinimumSize(new Dimension(200, 50));
+			panel.setPreferredSize(new Dimension(200, 50));
 			panel.setLayout(null);
 			panel.add(getBtnStop());
 			panel.add(getBtnStart());
@@ -119,7 +122,7 @@ public class songGUI extends JFrame{
 					guitar.start();
 				}
 			});
-			btnStart.setBounds(19, 11, 91, 23);
+			btnStart.setBounds(19, 11, 171, 23);
 		}
 		return btnStart;
 	}
@@ -137,7 +140,7 @@ public class songGUI extends JFrame{
 					guitar.setStopIt(true);
 				}
 			});
-			btnStop.setBounds(19, 44, 91, 23);
+			btnStop.setBounds(19, 44, 171, 23);
 		}
 		return btnStop;
 	}
@@ -149,7 +152,7 @@ public class songGUI extends JFrame{
 					pattiSmith.start();
 				}
 			});
-			btnStartPatty.setBounds(19, 78, 91, 23);
+			btnStartPatty.setBounds(19, 78, 171, 23);
 		}
 		return btnStartPatty;
 	}
@@ -165,7 +168,7 @@ public class songGUI extends JFrame{
 					bruceSpringsteen.start();
 				}
 			});
-			btnStartBruce.setBounds(19, 146, 91, 23);
+			btnStartBruce.setBounds(19, 146, 171, 23);
 		}
 		return btnStartBruce;
 	}
@@ -180,6 +183,8 @@ public class songGUI extends JFrame{
 		if (textArea == null) {
 			textArea = new JTextArea();
 		}
+		textArea.setText("\"Because the Night\" -  Bruce Springsteen and Patti Smith");
+		textArea.setFont(new Font("Comic Sans MS", Font.BOLD, 12));
 		return textArea;
 	}
 	private JButton getBtnStopPatty() {
@@ -191,7 +196,7 @@ public class songGUI extends JFrame{
 					pattiSmith.setStopIt(true);
 				}
 			});
-			btnStopPatty.setBounds(19, 112, 91, 23);
+			btnStopPatty.setBounds(19, 112, 171, 23);
 		}
 		return btnStopPatty;
 	}
@@ -204,7 +209,7 @@ public class songGUI extends JFrame{
 					bruceSpringsteen.setStopIt(true);
 				}
 			});
-			btnStopBruce.setBounds(19, 183, 91, 23);
+			btnStopBruce.setBounds(19, 183, 171, 23);
 		}
 		return btnStopBruce;
 	}
@@ -218,7 +223,7 @@ public class songGUI extends JFrame{
 					guitar.start();
 				}
 			});
-			btnStartInstrumental.setBounds(0, 218, 120, 23);
+			btnStartInstrumental.setBounds(19, 217, 171, 23);
 		}
 		return btnStartInstrumental;
 	}
@@ -231,7 +236,7 @@ public class songGUI extends JFrame{
 					guitar.setStopIt(true);
 				}
 			});
-			btnStopInstrumental.setBounds(0, 252, 120, 23);
+			btnStopInstrumental.setBounds(19, 251, 171, 23);
 		}
 		return btnStopInstrumental;
 	}
@@ -379,7 +384,7 @@ public class songGUI extends JFrame{
 	    }
 
 	    private void singVerseP(String verse, int delay, String name) {
-	    	if(!stopP)
+	    	if(!stopP && name.equals("Patti Smith"))
 	    		textArea.setText(textArea.getText()+'\n'+name+":		"+verse);
 	    	else 
 	    		return;
@@ -391,7 +396,7 @@ public class songGUI extends JFrame{
 			}
 	    }
 	    private void singVerseB(String verse, int delay, String name) {
-	    	if(!stopB)
+	    	if(!stopB && name.equals("Bruce Springsteen"))
 	    		textArea.setText(textArea.getText()+'\n'+name+":		"+verse);
 	    	else 
 	    		return;
